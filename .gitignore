@@ -1,0 +1,9 @@
+*.exe
+*.o
+*.out
+*.in
+.vscode/
+*.png
+*.docx
+*.doc
+*.pdf
