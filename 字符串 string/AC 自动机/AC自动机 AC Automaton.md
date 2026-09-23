@@ -1,7 +1,9 @@
 ### AC自动机(AC Automaton)
 在 Trie 上做 KMP
 
-
+Trie 树上一条从根开始的路径，对应一个字符串前缀，祖先关系表示了前缀关系
+fail 指针表示当前节点对应字符串的最长真后缀对应的状态
+用 fail 指针反向建立出一棵 fail 树，每个节点在 Trie 树中对应的字符串，在 fail 树中表示为字符串后缀，祖先关系表示了后缀关系
 
 使用经典AC自动机,会出现fail指针绕圈的现象,具体有如下三个场景
 
@@ -17,6 +19,8 @@
 
 经过这样的优化,在遍历文章时,就不需要fail指针的跳转了,甚至可以忽略fail指针的存在
 操作fail指针只需要发生在建立AC自动机时,或者文章遍历结束后的离线处理
+
+在经过优化后 tree 会被补全为完整的确定性有限状态自动机（Deterministic Finite Automaton，DFA），tree[u][i] 表示 AC 自动机从状态 u 读入字符 i 后的下一状态
 
 #### 模板
 [luoguP5357](https://www.luogu.com.cn/problem/P5357)
@@ -51,7 +55,10 @@ AC 自动机本质是一个有向图，dp[i][u] 其实就是从根节点出发�
 #### 计算不大于 n 且其十进制表示中不包含模式串的正整数的个数
 [luoguP3311](https://www.luogu.com.cn/problem/P3311)
 AC 自动机 + 数位 DP
-
+定义 $dp[i][u][free][has]$ 处理第 i 位时在 Trie 树上的节点 u，free = 1 无限制，has = 1 第 i 位前有数字
+在 AC 自动机中使用 alert 记录节点 u 是模式串终点或 fail 链上存在模式串终点
+如果 alert[u] = 1 则当前构成的串含有一个后缀是模式串，DP 即可返回 0
+数位 DP 过程要区分该位不选择数，顶格选择限制，在限制之下选，无限制选择 [0,9]
 
 #### 给出 n 个字符串，每次询问一个串在另一个串的出现次数
 [luoguP2414](https://www.luogu.com.cn/problem/P2414)
@@ -97,5 +104,7 @@ x -> ... -> v
 **判断这个节点的 DFS 序是否在 \([L[x],R[x]]\) 中**
 
 考虑将查询按 y 离线
-对于每个 y，检查
+对于每个 y，对每个查询的 x，检查 Trie 树上根到 y 路径上的节点，有多少个属于 Fail 树中 \(x\) 的子树
+这可以通过树状数组维护 fail 树的 DFS 序数组，在 DFS 遍历 y 时将 y 加入 DFS 序来查询
+
 [luoguP4045](https://www.luogu.com.cn/problem/P4045)
